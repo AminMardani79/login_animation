@@ -1,6 +1,11 @@
 "use client";
 import React, { useReducer } from "react";
-import { DispatchType, LoginFormType, formActions, formStatus } from "./application.types";
+import {
+  DispatchType,
+  LoginFormType,
+  formActions,
+  formStatus,
+} from "./application.types";
 import LoginForm from "@/components/loginForm";
 import LoginAnimation from "@/components/loginAnimation";
 
@@ -14,23 +19,20 @@ const initialState = {
   showPassword: false,
 };
 
-const reducer = (
-  state: LoginFormType,
-  action: DispatchType
-) => {
+const reducer = (state: LoginFormType, action: DispatchType) => {
   switch (action.type) {
     case formActions.INPUT_CHANGE:
-      let animationIndex;
-      animationIndex =
-        action.payload.name === "username" &&
-        !usernameRegex.test(action.payload.value)
+      let animationIndex = formStatus.DEFAULT;
+      if (action.payload.name === "username") {
+        animationIndex = !usernameRegex.test(action.payload.value)
           ? formStatus.INVALID_INPUT
           : formStatus.DEFAULT;
-      animationIndex =
-        action.payload.name === "password" &&
-        !passwordRegex.test(action.payload.value)
+      }
+      if (action.payload.name === "password") {
+        animationIndex = !passwordRegex.test(action.payload.value)
           ? formStatus.INVALID_INPUT
           : formStatus.DEFAULT;
+      }
       return {
         ...state,
         [action.payload.name]: action.payload.value,
