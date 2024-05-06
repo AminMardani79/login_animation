@@ -9,7 +9,7 @@ import {
 import LoginForm from "@/components/loginForm";
 import LoginAnimation from "@/components/loginAnimation";
 
-const usernameRegex = /^[a-zA-Z0-9]{3,}$/;
+const usernameRegex = /^[a-zA-Z0-9]+$/;
 const passwordRegex = /^[a-zA-Z0-9]+$/;
 
 const initialState = {
@@ -22,21 +22,23 @@ const initialState = {
 const reducer = (state: LoginFormType, action: DispatchType) => {
   switch (action.type) {
     case formActions.INPUT_CHANGE:
-      let animationIndex = formStatus.DEFAULT;
-      if (action.payload.name === "username") {
-        animationIndex = !usernameRegex.test(action.payload.value)
-          ? formStatus.INVALID_INPUT
-          : formStatus.DEFAULT;
-      }
-      if (action.payload.name === "password") {
-        animationIndex = !passwordRegex.test(action.payload.value)
-          ? formStatus.INVALID_INPUT
-          : formStatus.DEFAULT;
+      let animationIndex;
+      if (!state.showPassword) {
+        if (action.payload.name === "username") {
+          animationIndex = !usernameRegex.test(action.payload.value)
+            ? formStatus.INVALID_INPUT
+            : formStatus.DEFAULT;
+        }
+        if (action.payload.name === "password") {
+          animationIndex = !passwordRegex.test(action.payload.value)
+            ? formStatus.INVALID_INPUT
+            : formStatus.DEFAULT;
+        }
       }
       return {
         ...state,
         [action.payload.name]: action.payload.value,
-        animationIndex,
+        animationIndex: animationIndex ? animationIndex : state.animationIndex,
       };
     case formActions.FORM_SUBMIT:
       const testPassword = passwordRegex.test(state.password);
@@ -53,6 +55,15 @@ const reducer = (state: LoginFormType, action: DispatchType) => {
           showPassword: !state.showPassword,
         };
       } else {
+        const testPassword = passwordRegex.test(state.password);
+        const testUserName = usernameRegex.test(state.username);
+        if (!testUserName || !testPassword) {
+          return {
+            ...state,
+            animationIndex: formStatus.INVALID_INPUT,
+            showPassword: !state.showPassword,
+          };
+        }
         return {
           ...state,
           animationIndex: formStatus.DEFAULT,
