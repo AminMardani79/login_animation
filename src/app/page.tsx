@@ -82,7 +82,7 @@ export default function Home() {
   return (
     <main className="h-screen flex justify-center">
       <div
-        className="grid self-center justify-start align-middle bg-[#CCDC3C] grid-cols-[36%_auto]
+        className="grid self-center justify-start align-middle bg-[#CCDC3C] grid-cols-1 sm:grid-cols-[36%_auto]
          sm:w-6/8 sm:h-6/8 md:w-3/4 md:h-3/4 w-full h-screen"
       >
         <LoginForm dispatch={dispatch} state={state} />
